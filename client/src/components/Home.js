@@ -71,7 +71,7 @@ const Home = ({ user, logout }) => {
       } else {
         addMessageToConversation(data);
       }
-      
+
       sendMessage(data, body);
     } catch (error) {
       console.error(error);
