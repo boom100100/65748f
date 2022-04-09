@@ -18,6 +18,11 @@ const useStyles = makeStyles((theme) => ({
     color: "#9CADC8",
     letterSpacing: -0.17,
   },
+  unreadMessagesCount: {
+    background: "#3F92FF",
+    borderRadius: "10px",
+    color: "#ffffff",
+  },
 }));
 
 const ChatContent = ({ conversation }) => {
@@ -25,6 +30,11 @@ const ChatContent = ({ conversation }) => {
 
   const { otherUser } = conversation;
   const latestMessageText = conversation.id && conversation.latestMessageText;
+  const unreadMessages = conversation.messages.reduce(
+    (previous, current) =>
+      current.readAt === null ? ++previous : previous, 
+      0,
+    );
 
   return (
     <Box className={classes.root}>
@@ -36,6 +46,11 @@ const ChatContent = ({ conversation }) => {
           {latestMessageText}
         </Typography>
       </Box>
+      {unreadMessages > 0 &&
+        <Box className={classes.unreadMessagesCount}>
+          {unreadMessages}
+        </Box>
+      }
     </Box>
   );
 };
