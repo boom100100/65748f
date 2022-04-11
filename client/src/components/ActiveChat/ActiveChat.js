@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box } from '@material-ui/core';
 import { Input, Header, Messages } from './index';
+import moment from 'moment';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -36,6 +37,8 @@ const ActiveChat = ({
   const isConversation = (obj) => {
     return obj !== {} && obj !== undefined;
   };
+
+  isConversation(conversation) && conversation.messages.sort((a, b) => moment(a.createdAt).valueOf() - moment(b.createdAt).valueOf());
 
   return (
     <Box className={classes.root}>
