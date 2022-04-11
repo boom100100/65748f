@@ -8,7 +8,9 @@ const Messages = (props) => {
 
   return (
     <Box>
-      {messages.map((message) => {
+      {messages
+      .sort((a, b) => moment(a.createdAt).valueOf() - moment(b.createdAt).valueOf())
+      .map((message) => {
         const time = moment(message.createdAt).format('h:mm');
 
         return message.senderId === userId ? (
