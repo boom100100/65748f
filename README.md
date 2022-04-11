@@ -84,7 +84,7 @@ python manage.py test
 1. Seed the database.
 1. Start the backend server.
 1. Start the frontend server with `npm start` in `client` directory.
-1. Open Cypress dashboard with `npx cypress open` in `client` directory. If `open` fails, try `npx cypress verify` first.
+1. Open Cypress dashboard with `npx cypress open` in `client` directory.
 1. Click on the test suite to run (e.g. `auth.spec.js`).
 
 #### Notes
