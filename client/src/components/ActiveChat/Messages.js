@@ -1,10 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box } from '@material-ui/core';
 import { SenderBubble, OtherUserBubble } from '.';
 import moment from 'moment';
 
 const Messages = (props) => {
-  const { messages, otherUser, userId } = props;
+  const { markMessagesAsRead, messages, otherUser, userId } = props;
+
+  useEffect(
+    () => {
+      if (!!messages) {
+        return;
+      }
+      const reqBody = {
+        userId,
+        conversationId: messages[0].conversationId,
+        otherUserId: messages[0].otherUser.id,
+      };
+      markMessagesAsRead(reqBody);
+    },
+    [markMessagesAsRead, messages, userId]
+  );
 
   return (
     <Box>
