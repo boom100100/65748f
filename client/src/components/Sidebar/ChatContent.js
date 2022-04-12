@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -19,9 +19,14 @@ const useStyles = makeStyles((theme) => ({
     letterSpacing: -0.17,
   },
   unreadMessagesCount: {
+    alignSelf: "center",
     background: "#3F92FF",
-    borderRadius: "10px",
+    borderRadius: "20px",
     color: "#ffffff",
+    marginRight: "10px",
+    minWidth: "30px",
+    padding: "5px",
+    textAlign: "center",
   },
 }));
 
@@ -33,9 +38,9 @@ const ChatContent = ({ conversation }) => {
   const unreadMessagesCount = useMemo(
     () => conversation.messages.reduce(
     (previous, current) =>
-      current.readAt === null ? ++previous : previous, 
+      current.senderId === otherUser.id && current.readAt === null ? ++previous : previous, 
       0,
-    ), [conversation]
+    ), [conversation, otherUser.id]
   );
 
   return (
