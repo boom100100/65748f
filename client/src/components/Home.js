@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useContext } from "react";
+import React, { useCallback, useEffect, useState, useContext, useMemo } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { Grid, CssBaseline, Button } from "@material-ui/core";
@@ -7,6 +7,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { SidebarContainer } from "../components/Sidebar";
 import { ActiveChat } from "../components/ActiveChat";
 import { SocketContext } from "../context/socket";
+import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -116,7 +117,7 @@ const Home = ({ user, logout }) => {
       setConversations((prev) => 
           prev.map((convo) => {
             if (convo.id === message.conversationId) {
-              const convoCopy = { ...convo, messages: [ ...convo.messages ] }
+              const convoCopy = { ...convo, messages: [ ...convo.messages ] };
     
               convoCopy.messages.push(message);
               convoCopy.latestMessageText = message.text;
@@ -213,6 +214,19 @@ const Home = ({ user, logout }) => {
     }
   };
 
+  const conversationsWithAscMessages = useMemo(
+    () => conversations.map(
+      (convo) => ({
+        ...convo, 
+        messages: convo.messages.sort(
+          (a, b) => 
+            moment(a.createdAt).valueOf() - moment(b.createdAt).valueOf()
+        )
+      })
+    ),
+    [conversations]
+  );
+
   return (
     <>
       <Button onClick={handleLogout}>Logout</Button>
@@ -227,7 +241,7 @@ const Home = ({ user, logout }) => {
         />
         <ActiveChat
           activeConversation={activeConversation}
-          conversations={conversations}
+          conversations={conversationsWithAscMessages}
           user={user}
           postMessage={postMessage}
         />
