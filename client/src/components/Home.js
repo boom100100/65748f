@@ -83,7 +83,7 @@ const Home = ({ user, logout }) => {
       setConversations((prev) => 
         prev.map((convo) => {
           if (convo.otherUser.id === recipientId) {
-            const convoCopy = { ...convo };
+            const convoCopy = { ...convo, messages: [ ...convo.messages ] };
 
             convoCopy.messages.push(message);
             convoCopy.latestMessageText = message.text;
@@ -116,7 +116,7 @@ const Home = ({ user, logout }) => {
       setConversations((prev) => 
           prev.map((convo) => {
             if (convo.id === message.conversationId) {
-              const convoCopy = { ...convo };
+              const convoCopy = { ...convo, messages: [ ...convo.messages ] }
     
               convoCopy.messages.push(message);
               convoCopy.latestMessageText = message.text;
