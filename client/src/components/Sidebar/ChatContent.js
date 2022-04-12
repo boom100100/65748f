@@ -30,11 +30,13 @@ const ChatContent = ({ conversation }) => {
 
   const { otherUser } = conversation;
   const latestMessageText = conversation.id && conversation.latestMessageText;
-  const unreadMessages = conversation.messages.reduce(
+  const unreadMessagesCount = useMemo(
+    () => conversation.messages.reduce(
     (previous, current) =>
       current.readAt === null ? ++previous : previous, 
       0,
-    );
+    ), [conversation]
+  );
 
   return (
     <Box className={classes.root}>
@@ -46,9 +48,9 @@ const ChatContent = ({ conversation }) => {
           {latestMessageText}
         </Typography>
       </Box>
-      {unreadMessages > 0 &&
+      {unreadMessagesCount > 0 &&
         <Box className={classes.unreadMessagesCount}>
-          {unreadMessages}
+          {unreadMessagesCount}
         </Box>
       }
     </Box>
