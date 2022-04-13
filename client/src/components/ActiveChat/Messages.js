@@ -19,7 +19,7 @@ const Messages = (props) => {
       };
       markMessagesAsRead(reqBody);
     },
-    [conversationId, markMessagesAsRead, messages, userId]
+    [conversationId, markMessagesAsRead, messages, otherUser.id, userId]
   );
 
   return (

@@ -70,7 +70,7 @@ const Home = ({ user, logout }) => {
 
   const sendMessagesRead = (data, body) => {
     socket.emit("read-messages", {
-      conversation: data.conversation,
+      conversationId: data.conversationId,
       userId: body.userId,
       otherUserId: body.otherUserId,
     });
