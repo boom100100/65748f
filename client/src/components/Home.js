@@ -176,24 +176,12 @@ const Home = ({ user, logout }) => {
   const setMessagesRead = useCallback(
     (data) => {
       const { messages, conversationId } = data;
-      const messagesById = {}
-      
-      messages.forEach(
-        (message) => messagesById[message.id.toString()] = message
-      );
 
       setConversations((prev) =>
         prev.map(
           (convo) => {
             if (convo.id === conversationId) {
-              const updatedMessages = convo.messages.map(
-                (message) => ({
-                  ...message,
-                  readAt: messagesById[message.id.toString()].readAt,
-                })
-              );
-
-              return ({ ...convo, messages: [...updatedMessages] });
+              return { ...convo, messages };
             }
             return convo;
           }
