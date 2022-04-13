@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from django.contrib.auth.middleware import get_user
 from django.db.models import Max, Q
 from django.db.models.query import Prefetch
@@ -68,4 +69,51 @@ class Conversations(APIView):
                 safe=False,
             )
         except Exception as e:
+            return HttpResponse(status=500)
+
+class ReadConversationMessages(APIView):
+    def put(self, request: Request, **kwargs):
+        try:
+            user = get_user(request)
+
+            if user.is_anonymous:
+                return HttpResponse(status=401)
+
+            body = request.data
+            print(request)
+            print(body)
+            conversation_id = kwargs.get('id')
+            other_user_id: str = body.get('otherUserId')
+
+            if conversation_id is None:
+                raise Exception('conversation not included in request')
+
+            conversation = Conversation.objects.filter(Q(id=conversation_id)).first()
+            messages = (
+                Message.objects.filter(
+                    Q(conversation=conversation),
+                    Q(readAt=None),
+                    Q(senderId=other_user_id),
+                ).order_by("-createdAt")
+                
+            )
+
+            right_now = datetime.now(tz=timezone.utc)
+            messages.update(readAt=right_now)
+
+            conversation_response = {
+                "conversationId": conversation_id,
+                "messages": [
+                    message.to_dict(["id", "text", "senderId", "createdAt", "readAt"])
+                    for message in messages.all()
+                ],
+            }
+            print( [[l for l in e.__dir__() if '_' not in l] for e in messages.all()])
+
+            return JsonResponse(
+                conversation_response,
+                safe=False,
+            )
+        except Exception as e:
+            print(e)
             return HttpResponse(status=500)
