@@ -15,11 +15,11 @@ const Messages = (props) => {
       const reqBody = {
         conversationId,
         userId,
-        otherUserId: messages[0].senderId,
+        otherUserId: otherUser.id,
       };
       markMessagesAsRead(reqBody);
     },
-    [markMessagesAsRead, messages, userId]
+    [conversationId, markMessagesAsRead, messages, userId]
   );
 
   return (

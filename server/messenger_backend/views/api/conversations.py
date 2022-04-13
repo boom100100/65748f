@@ -80,26 +80,27 @@ class ReadConversationMessages(APIView):
                 return HttpResponse(status=401)
 
             body = request.data
-            print(request)
-            print(body)
             conversation_id = kwargs.get('id')
-            other_user_id: str = body.get('otherUserId')
+            other_user_id = body.get('otherUserId')
 
             if conversation_id is None:
                 raise Exception('conversation not included in request')
 
-            conversation = Conversation.objects.filter(Q(id=conversation_id)).first()
-            messages = (
+            unread_messages = (
                 Message.objects.filter(
-                    Q(conversation=conversation),
-                    Q(readAt=None),
-                    Q(senderId=other_user_id),
-                ).order_by("-createdAt")
-                
+                        conversation__id=conversation_id
+                    ).filter(
+                        Q(readAt=None) &
+                        Q(senderId=other_user_id)
+                    )
             )
 
-            right_now = datetime.now(tz=timezone.utc)
-            messages.update(readAt=right_now)
+            unread_messages.update(readAt=datetime.now(tz=timezone.utc))
+            messages = (
+                Message.objects.filter(
+                    conversation__id=conversation_id
+                ).order_by("-createdAt")
+            )
 
             conversation_response = {
                 "conversationId": conversation_id,
@@ -108,12 +109,10 @@ class ReadConversationMessages(APIView):
                     for message in messages.all()
                 ],
             }
-            print( [[l for l in e.__dir__() if '_' not in l] for e in messages.all()])
 
             return JsonResponse(
                 conversation_response,
                 safe=False,
             )
-        except Exception as e:
-            print(e)
+        except Exception:
             return HttpResponse(status=500)
