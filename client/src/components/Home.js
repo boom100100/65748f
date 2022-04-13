@@ -63,7 +63,7 @@ const Home = ({ user, logout }) => {
   };
 
   const putMessagesRead = async (body) => {
-    const { data } = await axios.put("/api/conversations", body);
+    const { data } = await axios.put(`/api/conversations/${body.conversationId}`, body);
     return data;
   };
 
@@ -99,7 +99,8 @@ const Home = ({ user, logout }) => {
 
       const messages = conversation.messages;
 
-      const highestMessageIndex = messages.length ?? 0;
+      const highestMessageIndex = messages.length - 1 ?? 0;
+
       for (let i = highestMessageIndex; i >= 0; i--) {
         const message = messages[i];
 

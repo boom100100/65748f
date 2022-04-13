@@ -4,17 +4,18 @@ import { SenderBubble, OtherUserBubble } from '.';
 import moment from 'moment';
 
 const Messages = (props) => {
-  const { markMessagesAsRead, messages, otherUser, userId } = props;
+  const { id: conversationId, messages, otherUser } = props.conversation;
+  const { markMessagesAsRead, userId } = props;
 
   useEffect(
     () => {
-      if (!!messages) {
+      if (!messages.length) {
         return;
       }
       const reqBody = {
+        conversationId,
         userId,
-        conversationId: messages[0].conversationId,
-        otherUserId: messages[0].otherUser.id,
+        otherUserId: messages[0].senderId,
       };
       markMessagesAsRead(reqBody);
     },
