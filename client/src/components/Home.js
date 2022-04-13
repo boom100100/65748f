@@ -98,22 +98,15 @@ const Home = ({ user, logout }) => {
         return;
       }
 
-      const messages = conversation.messages;
-
-      const highestMessageIndex = messages.length - 1 ?? 0;
-
-      for (let i = highestMessageIndex; i >= 0; i--) {
-        const message = messages[i];
-
-        if (message.senderId !== body.userId && message.readAt == null) {
+      if (conversation.messages.some(
+        // userIsRecipient, messageIsUnread
+        message => message.senderId !== body.userId && message.readAt == null
+      )) {
           const data = await putMessagesRead(body);
 
           setMessagesRead(data);
 
           sendMessagesRead(data, body);
-
-          break;
-        }
       }
     } catch (error) {
       console.error(error);
