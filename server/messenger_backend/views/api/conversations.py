@@ -83,9 +83,6 @@ class ReadConversationMessages(APIView):
             conversation_id = kwargs.get('id')
             other_user_id = body.get('otherUserId')
 
-            if conversation_id is None:
-                raise Exception('conversation not included in request')
-
             unread_messages = (
                 Message.objects.filter(
                         conversation__id=conversation_id
