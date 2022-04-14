@@ -6,15 +6,16 @@ from .user import User
 
 
 class Conversation(utils.CustomModel):
-    # django many to many
-    # users should include user1 and user2
-    # and then downstream, 
-    users = 'something'
+    users = models.ManyToManyField(User)
+
+    # TODO: remove user1 and user2 after running script to move these values to users
     user1 = models.ForeignKey(
-        User, on_delete=models.CASCADE, db_column="user1Id", related_name="+"
+        User, on_delete=models.CASCADE, db_column="user1Id", related_name="+",
+        blank=True, null=True
     )
     user2 = models.ForeignKey(
-        User, on_delete=models.CASCADE, db_column="user2Id", related_name="+", 
+        User, on_delete=models.CASCADE, db_column="user2Id", related_name="+",
+        blank=True, null=True
     )
     createdAt = models.DateTimeField(auto_now_add=True, db_index=True)
     updatedAt = models.DateTimeField(auto_now=True)
