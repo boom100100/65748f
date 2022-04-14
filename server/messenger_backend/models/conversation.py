@@ -6,7 +6,10 @@ from .user import User
 
 
 class Conversation(utils.CustomModel):
-
+    # django many to many
+    # users should include user1 and user2
+    # and then downstream, 
+    users = 'something'
     user1 = models.ForeignKey(
         User, on_delete=models.CASCADE, db_column="user1Id", related_name="+"
     )
