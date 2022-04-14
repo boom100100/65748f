@@ -64,14 +64,15 @@ const Home = ({ user, logout }) => {
   };
 
   const putMessagesRead = async (body) => {
-    const { conversationId, ...requestBody } = body;
+    const { conversationId, userId: _, ...requestBody } = body;
     const { data } = await axios.put(`/api/conversations/${conversationId}`, requestBody);
     return data;
   };
 
-  const sendMessagesRead = (data, body) => {
+  const sendMessagesRead = (body) => {
     socket.emit("read-messages", {
-      conversationId: data.conversationId,
+      conversationId: body.conversationId,
+      userId: body.userId,
       otherUserId: body.otherUserId,
     });
   };
@@ -106,7 +107,7 @@ const Home = ({ user, logout }) => {
 
           setMessagesRead(data);
 
-          sendMessagesRead(data, body);
+          sendMessagesRead(body);
       }
     } catch (error) {
       console.error(error);

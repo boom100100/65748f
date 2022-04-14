@@ -14,6 +14,7 @@ const Messages = (props) => {
       }
       const reqBody = {
         conversationId,
+        userId,
         otherUserId: otherUser.id,
       };
       markMessagesAsRead(reqBody);
