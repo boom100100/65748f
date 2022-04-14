@@ -50,7 +50,9 @@ const ActiveChat = ({
             {user && (
               <>
                 <Messages
-                  conversation={conversation}
+                  conversationId={conversation.id}
+                  messages={conversation.messages}
+                  otherUser={conversation.otherUser}
                   userId={user.id}
                   markMessagesAsRead={markMessagesAsRead}
                 />
