@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ChatContent = ({ conversation }) => {
+const ChatContent = ({ conversation, userId }) => {
   const classes = useStyles();
 
   const { otherUser } = conversation;
@@ -38,7 +38,7 @@ const ChatContent = ({ conversation }) => {
   const unreadMessagesCount = useMemo(
     () => conversation.messages.reduce(
     (previous, current) =>
-      current.senderId === otherUser.id && current.readAt === null ? ++previous : previous, 
+      current.senderId !== userId && current.readAt === null ? ++previous : previous, 
       0,
     ), [conversation, otherUser.id]
   );

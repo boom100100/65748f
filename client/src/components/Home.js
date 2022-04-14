@@ -64,8 +64,7 @@ const Home = ({ user, logout }) => {
   };
 
   const putMessagesRead = async (body) => {
-    const { conversationId, userId: _, ...requestBody } = body;
-    const { data } = await axios.put(`/api/conversations/${conversationId}`, requestBody);
+    const { data } = await axios.put(`/api/conversations/${body.conversationId}`);
     return data;
   };
 
@@ -73,7 +72,6 @@ const Home = ({ user, logout }) => {
     socket.emit("read-messages", {
       conversationId: body.conversationId,
       userId: body.userId,
-      otherUserId: body.otherUserId,
     });
   };
 
@@ -101,7 +99,7 @@ const Home = ({ user, logout }) => {
 
       if (conversation.messages.some(
         // userIsRecipient, messageIsUnread
-        message => message.senderId === body.otherUserId && message.readAt == null
+        message => message.senderId !== body.userId && message.readAt == null
       )) {
           const data = await putMessagesRead(body);
 

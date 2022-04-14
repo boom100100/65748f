@@ -79,16 +79,14 @@ class ReadConversationMessages(APIView):
             if user.is_anonymous:
                 return HttpResponse(status=401)
 
-            body = request.data
             conversation_id = kwargs.get('id')
-            other_user_id = body.get('otherUserId')
 
             unread_messages = (
                 Message.objects.filter(
                         conversation__id=conversation_id
                     ).filter(
                         Q(readAt=None) &
-                        Q(senderId=other_user_id)
+                        ~Q(senderId=user.id)
                     )
             )
 

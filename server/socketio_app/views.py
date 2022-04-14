@@ -41,6 +41,6 @@ def logout(sid, user_id):
 def read_messages(sid, data):
     sio.emit(
         "read-messages",
-        {"conversationId": data["conversationId"], "recipientId": data["userId"], "senderId": data["otherUserId"]},
+        {"conversationId": data["conversationId"], "recipientId": data["userId"]},
         skip_sid=sid
     )
