@@ -14,8 +14,9 @@ const useStyles = makeStyles((theme) => ({
     letterSpacing: -0.2,
   },
   previewText: {
+    fontWeight: hasUnreadMessages => hasUnreadMessages ? 900 : 400,
     fontSize: 12,
-    color: "#9CADC8",
+    color: hasUnreadMessages => hasUnreadMessages ? "#000000" : "#9CADC8",
     letterSpacing: -0.17,
   },
   unreadMessagesCount: {
@@ -32,10 +33,11 @@ const useStyles = makeStyles((theme) => ({
 
 const ChatContent = ({ conversation }) => {
   const { unreadMessagesCount } = conversation;
-  const classes = useStyles();
 
   const { otherUser } = conversation;
   const latestMessageText = conversation.id && conversation.latestMessageText;
+  const hasUnreadMessages = unreadMessagesCount > 0;
+  const classes = useStyles(hasUnreadMessages);
 
   return (
     <Box className={classes.root}>
@@ -47,7 +49,7 @@ const ChatContent = ({ conversation }) => {
           {latestMessageText}
         </Typography>
       </Box>
-      {unreadMessagesCount > 0 &&
+      {hasUnreadMessages &&
         <Box className={classes.unreadMessagesCount}>
           {unreadMessagesCount}
         </Box>
