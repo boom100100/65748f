@@ -86,6 +86,10 @@ class ReadConversationMessages(APIView):
                 return HttpResponse(status=401)
 
             conversation_id = kwargs.get('id')
+            conversation = Conversation.objects.get(id=conversation_id)
+
+            if user.id not in [conversation.user1.id, conversation.user2.id]:
+                return HttpResponse(status=401)
 
             unread_messages = (
                 Message.objects.filter(
@@ -116,5 +120,6 @@ class ReadConversationMessages(APIView):
                 conversation_response,
                 safe=False,
             )
-        except Exception:
+        except Exception as e:
+            print(e)
             return HttpResponse(status=500)
