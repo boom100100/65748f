@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useContext, useMemo } from "react";
+import React, { useCallback, useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { Grid, CssBaseline, Button } from "@material-ui/core";
@@ -7,7 +7,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { SidebarContainer } from "../components/Sidebar";
 import { ActiveChat } from "../components/ActiveChat";
 import { SocketContext } from "../context/socket";
-import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -99,7 +98,7 @@ const Home = ({ user, logout }) => {
 
       if (conversation.messages.some(
         // userIsRecipient, messageIsUnread
-        message => message.senderId !== body.userId && message.readAt == null
+        message => message.senderId !== body.userId && !message.readAt
       )) {
           const data = await putMessagesRead(body);
 
