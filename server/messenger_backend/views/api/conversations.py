@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from django.contrib.auth.middleware import get_user
-from django.db.models import Max, Q
+from django.db.models import Q
 from django.db.models.query import Prefetch
 from django.http import HttpResponse, JsonResponse
 from messenger_backend.models import Conversation, Message
@@ -41,6 +41,7 @@ class Conversations(APIView):
                         message.to_dict(["id", "text", "senderId", "createdAt", "readAt"])
                         for message in convo.messages.all()
                     ],
+                    "unreadMessagesCount": Message.received_unread_messages_count(convo.id, user_id),
                 }
 
                 # set properties for notification count and latest message preview
@@ -103,6 +104,7 @@ class ReadConversationMessages(APIView):
                     message.to_dict(["id", "text", "senderId", "createdAt", "readAt"])
                     for message in messages.all()
                 ],
+                "unreadMessagesCount": 0,
             }
 
             return JsonResponse(

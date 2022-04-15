@@ -17,3 +17,12 @@ class Message(utils.CustomModel):
     createdAt = models.DateTimeField(auto_now_add=True, db_index=True)
     updatedAt = models.DateTimeField(auto_now=True)
     readAt = models.DateTimeField(null=True)
+
+    
+    def received_unread_messages_count(conversation_id, user_id):
+        return Message.objects.filter(
+            conversation__id=conversation_id
+        ).filter(
+            ~models.Q(senderId=user_id) &
+            models.Q(readAt=None)
+        ).count()

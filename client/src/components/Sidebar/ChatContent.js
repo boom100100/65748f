@@ -30,18 +30,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ChatContent = ({ conversation, userId }) => {
+const ChatContent = ({ conversation }) => {
+  const { unreadMessagesCount } = conversation;
   const classes = useStyles();
 
   const { otherUser } = conversation;
   const latestMessageText = conversation.id && conversation.latestMessageText;
-  const unreadMessagesCount = useMemo(
-    () => conversation.messages.reduce(
-    (previous, current) =>
-      current.senderId !== userId && current.readAt === null ? ++previous : previous, 
-      0,
-    ), [conversation, otherUser.id]
-  );
 
   return (
     <Box className={classes.root}>

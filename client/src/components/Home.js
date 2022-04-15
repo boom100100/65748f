@@ -141,6 +141,7 @@ const Home = ({ user, logout }) => {
           id: message.conversationId,
           otherUser: sender,
           messages: [message],
+          unreadMessagesCount: 0,
         };
         newConvo.latestMessageText = message.text;
         setConversations([newConvo, ...conversations]);
@@ -166,13 +167,13 @@ const Home = ({ user, logout }) => {
 
   const setMessagesRead = useCallback(
     (data) => {
-      const { messages, conversationId } = data;
+      const { messages, conversationId, unreadMessagesCount } = data;
 
       setConversations((prev) =>
         prev.map(
           (convo) => {
             if (convo.id === conversationId) {
-              return { ...convo, messages };
+              return { ...convo, messages, unreadMessagesCount };
             }
             return convo;
           }
