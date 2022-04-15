@@ -54,6 +54,10 @@ class Conversations(APIView):
                 elif convo.user2 and convo.user2.id != user_id:
                     convo_dict["otherUser"] = convo.user2.to_dict(user_fields)
 
+                last_read_message = Message.last_read_message(convo.id, convo_dict["otherUser"]["id"])
+                 
+                convo_dict["otherUser"]["lastReadMessageId"] = last_read_message.id if last_read_message else None
+
                 # set property for online status of the other user
                 if convo_dict["otherUser"]["id"] in online_users:
                     convo_dict["otherUser"]["online"] = True
@@ -70,6 +74,7 @@ class Conversations(APIView):
                 safe=False,
             )
         except Exception as e:
+            print(e)
             return HttpResponse(status=500)
 
 class ReadConversationMessages(APIView):

@@ -26,3 +26,11 @@ class Message(utils.CustomModel):
             ~models.Q(senderId=user_id) &
             models.Q(readAt=None)
         ).count()
+
+    def last_read_message(conversation_id, user_id):
+        return Message.objects.filter(
+            conversation__id=conversation_id
+        ).filter(
+            ~models.Q(senderId=user_id) &
+            ~models.Q(readAt=None)
+        ).order_by("createdAt").last()
