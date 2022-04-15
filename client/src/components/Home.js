@@ -266,19 +266,6 @@ const Home = ({ user, logout }) => {
     }
   };
 
-  const conversationsWithAscMessages = useMemo(
-    () => conversations.map(
-      (convo) => ({
-        ...convo, 
-        messages: convo.messages.sort(
-          (a, b) => 
-            moment(a.createdAt).valueOf() - moment(b.createdAt).valueOf()
-        )
-      })
-    ),
-    [conversations]
-  );
-
   return (
     <>
       <Button onClick={handleLogout}>Logout</Button>
@@ -293,7 +280,7 @@ const Home = ({ user, logout }) => {
         />
         <ActiveChat
           activeConversation={activeConversation}
-          conversations={conversationsWithAscMessages}
+          conversations={conversations}
           user={user}
           markMessagesAsRead={markMessagesAsRead}
           postMessage={postMessage}
