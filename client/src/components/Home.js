@@ -173,7 +173,8 @@ const Home = ({ user, logout }) => {
         prev.map(
           (convo) => {
             if (convo.id === conversationId) {
-              return { ...convo, messages, unreadMessagesCount };
+              const latestMessageText = messages[messages.length - 1].text;
+              return { ...convo, messages, latestMessageText, unreadMessagesCount };
             }
             return convo;
           }
