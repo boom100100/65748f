@@ -25,6 +25,7 @@ urlpatterns = [
     path("auth/logout", auth.LogOut.as_view()),
     path("auth/user", auth.AuthenticatedUser.as_view()),
     path("api/conversations", api.Conversations.as_view()),
+    path("api/conversations/<int:id>", api.ReadConversationMessages.as_view()),
     path("api/messages", api.Messages.as_view()),
     path("api/users/<str:username>", api.Username.as_view()),
 ]

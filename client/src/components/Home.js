@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useContext, useMemo } from "react";
+import React, { useCallback, useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { Grid, CssBaseline, Button } from "@material-ui/core";
@@ -7,7 +7,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { SidebarContainer } from "../components/Sidebar";
 import { ActiveChat } from "../components/ActiveChat";
 import { SocketContext } from "../context/socket";
-import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -63,6 +62,18 @@ const Home = ({ user, logout }) => {
     });
   };
 
+  const putMessagesRead = async (body) => {
+    const { data } = await axios.put(`/api/conversations/${body.conversationId}`);
+    return data;
+  };
+
+  const sendMessagesRead = (body) => {
+    socket.emit("read-messages", {
+      conversationId: body.conversationId,
+      userId: body.userId,
+    });
+  };
+
   const postMessage = async (body) => {
     try {
       const data = await saveMessage(body);
@@ -78,6 +89,27 @@ const Home = ({ user, logout }) => {
       console.error(error);
     }
   };
+  const markMessagesAsRead = async (body) => {
+    try {
+      const conversation = conversations.find(c => c.id === body.conversationId);
+      if (!conversation) {
+        return;
+      }
+
+      if (conversation.messages.some(
+        // userIsRecipient, messageIsUnread
+        message => message.senderId !== body.userId && !message.readAt
+      )) {
+          const data = await putMessagesRead(body);
+
+          setMessagesRead(data);
+
+          sendMessagesRead(body);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   const addNewConvo = useCallback(
     (recipientId, message) => {
@@ -109,6 +141,7 @@ const Home = ({ user, logout }) => {
           id: message.conversationId,
           otherUser: sender,
           messages: [message],
+          unreadMessagesCount: 0,
         };
         newConvo.latestMessageText = message.text;
         setConversations([newConvo, ...conversations]);
@@ -130,6 +163,24 @@ const Home = ({ user, logout }) => {
       );
     },
     [setConversations, conversations],
+  );
+
+  const setMessagesRead = useCallback(
+    (data) => {
+      const { messages, conversationId, unreadMessagesCount } = data;
+
+      setConversations((prev) =>
+        prev.map(
+          (convo) => {
+            if (convo.id === conversationId) {
+              const latestMessageText = messages[messages.length - 1].text;
+              return { ...convo, messages, latestMessageText, unreadMessagesCount };
+            }
+            return convo;
+          }
+          ));
+    },
+    [setConversations]
   );
 
   const setActiveChat = (username) => {
@@ -171,6 +222,7 @@ const Home = ({ user, logout }) => {
     socket.on("add-online-user", addOnlineUser);
     socket.on("remove-offline-user", removeOfflineUser);
     socket.on("new-message", addMessageToConversation);
+    socket.on("read-messages", setMessagesRead);
 
     return () => {
       // before the component is destroyed
@@ -178,8 +230,9 @@ const Home = ({ user, logout }) => {
       socket.off("add-online-user", addOnlineUser);
       socket.off("remove-offline-user", removeOfflineUser);
       socket.off("new-message", addMessageToConversation);
+      socket.off("read-messages", setMessagesRead);
     };
-  }, [addMessageToConversation, addOnlineUser, removeOfflineUser, socket]);
+  }, [addMessageToConversation, addOnlineUser, removeOfflineUser, setMessagesRead, socket]);
 
   useEffect(() => {
     // when fetching, prevent redirect
@@ -214,19 +267,6 @@ const Home = ({ user, logout }) => {
     }
   };
 
-  const conversationsWithAscMessages = useMemo(
-    () => conversations.map(
-      (convo) => ({
-        ...convo, 
-        messages: convo.messages.sort(
-          (a, b) => 
-            moment(a.createdAt).valueOf() - moment(b.createdAt).valueOf()
-        )
-      })
-    ),
-    [conversations]
-  );
-
   return (
     <>
       <Button onClick={handleLogout}>Logout</Button>
@@ -241,8 +281,9 @@ const Home = ({ user, logout }) => {
         />
         <ActiveChat
           activeConversation={activeConversation}
-          conversations={conversationsWithAscMessages}
+          conversations={conversations}
           user={user}
+          markMessagesAsRead={markMessagesAsRead}
           postMessage={postMessage}
         />
       </Grid>

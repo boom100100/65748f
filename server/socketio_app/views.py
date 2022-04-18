@@ -36,3 +36,11 @@ def logout(sid, user_id):
     if user_id in online_users:
         online_users.remove(user_id)
     sio.emit("remove-offline-user", user_id, skip_sid=sid)
+
+@sio.on("read-messages")
+def read_messages(sid, data):
+    sio.emit(
+        "read-messages",
+        {"conversationId": data["conversationId"], "recipientId": data["userId"]},
+        skip_sid=sid
+    )
